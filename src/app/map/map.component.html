@@ -1,0 +1,144 @@
+<cds-tile
+  [ngClass]="{ 'hidden-panel': isPanelHidden }"
+  style="
+    position: fixed;
+    top: 1;
+    left: 0; /* Aligns with the left edge */
+    z-index: 1000; /* High z-index to ensure visibility */
+    padding: 15px;
+    background-color: #ccc;
+    border: 1px solid #ccc;
+    width: 300px; /* Adjust width as needed */
+    height: calc(100vh - 20px); /* Full height minus some padding */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+    transition: transform 0.5s ease-in-out; /* Add transition for smooth rail effect */
+    transform: translateX(0); /* Initial position */
+  "
+  [style.transform]="isPanelHidden ? 'translateX(-100%)' : 'translateX(0)'"
+>
+  <button cdsButton="primary" (click)="openModal()">Upload GeoJSON File</button>
+
+  <label for="property-select">Choose Property:</label>
+  <cds-dropdown
+    [label]="label"
+    [hideLabel]="hideLabel"
+    [skeleton]="skeleton"
+    [helperText]="helperText"
+    [size]="'md'"
+    [dropUp]="dropUp"
+    [invalid]="invalid"
+    [invalidText]="invalidText"
+    [warn]="warn"
+    [warnText]="warnText"
+    [theme]="'light'"
+    placeholder="Choose Property"
+    [disabled]="disabled"
+    [readonly]="readonly"
+    (selected)="selectProperty($event)"
+    (onClose)="onClose($event)"
+  >
+    <cds-dropdown-list
+      [items]="properties"
+      style="max-height: calc(1.5rem * 7); overflow-y: auto"
+    ></cds-dropdown-list>
+  </cds-dropdown>
+
+  <div *ngIf="selectedPropertyValues?.length > 0">
+    <div *ngFor="let value of selectedPropertyValues" class="color-picker">
+      <span>{{ value }}</span>
+      <input type="color" (input)="changeColor(value, $event)" />
+    </div>
+  </div>
+</cds-tile>
+
+<button
+  cdsButton="primary"
+  style="
+    position: fixed;
+    top: 10px;
+    left: 310px;
+    z-index: 1010;
+    padding: 10px;
+    margin: 5px;
+    transition: left 0.5s ease-in-out;
+  "
+  [style.left]="isPanelHidden ? '5px' : '310px'"
+  (click)="togglePanel()"
+>
+  <ng-container *ngIf="isPanelHidden; else openSign">
+    <span style="padding: 5px">&#9654;</span>
+  </ng-container>
+  <ng-template #openSign>
+    <span style="padding: 5px">&#9664;</span>
+  </ng-template>
+</button>
+
+<cds-modal
+  [open]="isModalOpen"
+  (overlaySelected)="closeModal()"
+  modalTitle="Upload GeoJSON File"
+  [size]="'lg'"
+  style="display: flex; align-items: center; justify-content: center"
+>
+  <button
+    cdsButton="ghost"
+    (click)="closeModal()"
+    style="
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #333;
+    "
+  >
+    ✕
+  </button>
+
+  <div
+    style="
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    "
+  >
+    <cds-file-uploader
+      [drop]="true"
+      [title]="'Upload GeoJSON File'"
+      [description]="'Select a GeoJSON file to upload and display on the map.'"
+      [buttonText]="'Upload File'"
+      [buttonType]="'primary'"
+      [accept]="['.geojson', '.json']"
+      [multiple]="false"
+      [size]="'md'"
+      [fileItemSize]="'lg'"
+      [disabled]="false"
+      [dropText]="'Drag and drop files here or upload'"
+      (change)="onFileSelected($event)"
+      style="max-width: 400px; width: 100%"
+    ></cds-file-uploader>
+  </div>
+</cds-modal>
+
+<div id="mapContainer" class="map-container" style="position: relative">
+  <div #mapContainerInner class="map-container-inner"></div>
+
+  <div
+    id="measurementInfo"
+    style="
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background-color: white;
+      border-radius: 10px;
+      padding: 10px;
+      z-index: 1;
+    "
+  ></div>
+</div>

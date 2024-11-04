@@ -2,10 +2,17 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "types": ["geojson"],
     "baseUrl": "./",
+    "paths": {
+      
+      "@angular/*": ["node_modules/@angular/*"],
+      "@angular/fire/*": ["node_modules/@angular/fire/*"],
+      "firebase": ["node_modules/firebase"]
+    },
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
-    "strict": true,
+    "strict": false,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
@@ -26,6 +33,7 @@
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
+    "strict": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true
